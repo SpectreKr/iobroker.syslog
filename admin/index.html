@@ -1,0 +1,286 @@
+<html>
+<meta charset="UTF-8">
+<title></title>
+<!-- these 4 files always have to be included -->
+<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css"/>
+<script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../../lib/js/jquery-ui-1.10.3.full.min.js"></script>
+
+<!-- these three files  have to be always included -->
+<link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+<script type="text/javascript" src="../../js/translate.js"></script>
+<script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+<!-- you have to define 2 functions in the global scope: -->
+<script type="text/javascript">
+    systemDictionary = {
+        "Syslog adapter settings": {
+            "de": "Syslog-Adapter Einstellungen",
+            "ru": "Настройки профайлера"},
+        "Syslog adapter settings": {
+            "en": "Syslog adapter settings",
+            "de": "Syslog adapter Einstellungen",
+            "ru": "Настройки профайлера Syslog"
+        },
+        "DB settings:":         {"en": "Syslog DB settings:",          "de": "Syslog DB Einstellungen:",              "ru": "Syslog DB settings:"},
+        "Host":                 {"en": "Host",                  "de": "Host",                           "ru": "Хост"},
+        "DB Name":              {"en": "Database name",         "de": "Datenbankname",                  "ru": "Имя базы данных"},
+        "Port":                 {"en": "Port",                  "de": "Port",                           "ru": "Порт"},
+        "User":                 {"en": "User",                  "de": "Login",                          "ru": "Пользователь"},
+        "Password":             {"en": "Password",              "de": "Kennwort",                       "ru": "Пароль"},
+        "Password confirm":     {"en": "Password confirm",      "de": "Kennwort-Wiederholung",          "ru": "Подтверждение пароля"},
+        "Test connection":      {"en": "Test connection",       "de": "Verbindung testen",              "ru": "Проверить соединение"},
+        "Reset DB":             {"en": "Reset DB",              "de": "Alle Daten in DB löschen",       "ru": "Сбросить DB"},
+        "Ok":                   {"en": "Ok",                    "de": "Ok",                             "ru": "Ok"},
+        "Notify:":              {"en": "Announce:",             "de": "bekannt geben:",                 "ru": "Оповещать о...:"},
+        "keywords":             {"en": "Keywords",              "de": "Stichworte",                     "ru": "Ключевые слова"}
+    };
+
+    var convertComma = null;
+    function setValue(id, value, onChange) {
+        // example: select elements with id=key and class=value and insert value
+        if ($('#' + id + '.value').attr('type') === 'checkbox') {
+            $('#' + id + '.value').prop('checked', value).change(function () {
+                onChange();
+            });
+        } else {
+            $('#' + id + '.value').val(value).change(function() {
+                onChange();
+            }).keyup(function() {
+                // Check that only numbers entered
+                if ($(this).hasClass('number')) {
+                    var val = $(this).val();
+                    if (val) {
+                        var newVal = '';
+                        for (var i = 0; i < val.length; i++) {
+                            if ((val[i] >= '0' && val[i] <= '9') || val[i] === '-' || val[i] === '+' || val[i] === '.' || val[i] === ',') {
+                                if (val[i] === '.' && convertComma === true)  val[i] === ',';
+                                if (val[i] === ',' && convertComma === false) val[i] === '.';
+                                newVal += val[i];
+                            }
+                        }
+
+                        if (val != newVal) $(this).val(newVal);
+                    }
+                }
+                $(this).trigger('change');
+           });
+        }
+    }
+
+    function load(settings, onChange) {
+        // works only with newest admin adapter
+        if (typeof systemConfig !== 'undefined') {
+            convertComma = systemConfig.common.isFloatComma;
+        }
+
+       for (var key in settings) {
+            setValue(key, settings[key], onChange);
+        }
+        $('#passwordConfirm').val(settings.password);
+
+        $('#test').button().click(function () {
+            getIsAdapterAlive(function (isAlive) {
+                if (!isAlive) {
+                    showMessage(_('Start or enable adapter first'));
+                } else {
+                    $('#test').button('option', 'disabled', true);
+                    sendTo(null, 'test', {
+                        config: {
+                            dbtype:   $('#dbtype').val(),
+                            port:     $('#port').val(),
+                            host:     $('#host').val(),
+                            user:     $('#user').val(),
+                            fileName: $('#fileName').val(),
+                            password: $('#password').val()
+                        }
+                    }, function (response) {
+                        $('#test').button('option', 'disabled', false);
+                        showMessage(response.error || 'OK');
+                    });
+                }
+            });
+        });
+
+        onChange(false);
+    }
+
+    // ... and the function save has to exist.
+    // you have to make sure the callback is called with the settings object as first param!
+    function save(callback) {
+        // example: select elements with class=value and build settings object
+        var settings = {};
+        $('.value').each(function () {
+            var $this = $(this);
+            var id = $this.attr('id');
+
+            if ($this.attr('type') == 'checkbox') {
+                settings[id] = $this.prop('checked');
+            } else {
+                settings[id] = $this.val();
+           }
+        });
+
+        if (($('#dbtype').val() != 'sqlite') && ($('#passwordConfirm').val() != $('#password').val())) {
+            showMessage(_('Password confirmation is not equal with password!'));
+            return;
+        }
+
+        callback(settings);
+    }
+</script>
+
+<style>
+    .loader {
+        display: none;
+        position: absolute;
+        left: calc(50% - 0.5em);
+        top: calc(50% - 0.5em - 72px);
+        font-size: 90px;
+        text-indent: -9999em;
+        overflow: hidden;
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        margin: 72px auto;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation: load6 1.7s infinite ease;
+        animation: load6 1.7s infinite ease;
+    }
+
+    @-webkit-keyframes load6 {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, 0 -0.83em 0 -0.42em #00ffff, 0 -0.83em 0 -0.44em #00ffff, 0 -0.83em 0 -0.46em #00ffff, 0 -0.83em 0 -0.477em #00ffff;
+        }
+        5%,
+        95% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, 0 -0.83em 0 -0.42em #00ffff, 0 -0.83em 0 -0.44em #00ffff, 0 -0.83em 0 -0.46em #00ffff, 0 -0.83em 0 -0.477em #00ffff;
+        }
+        10%,
+        59% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, -0.087em -0.825em 0 -0.42em #00ffff, -0.173em -0.812em 0 -0.44em #00ffff, -0.256em -0.789em 0 -0.46em #00ffff, -0.297em -0.775em 0 -0.477em #00ffff;
+        }
+        20% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, -0.338em -0.758em 0 -0.42em #00ffff, -0.555em -0.617em 0 -0.44em #00ffff, -0.671em -0.488em 0 -0.46em #00ffff, -0.749em -0.34em 0 -0.477em #00ffff;
+        }
+        38% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, -0.377em -0.74em 0 -0.42em #00ffff, -0.645em -0.522em 0 -0.44em #00ffff, -0.775em -0.297em 0 -0.46em #00ffff, -0.82em -0.09em 0 -0.477em #00ffff;
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, 0 -0.83em 0 -0.42em #00ffff, 0 -0.83em 0 -0.44em #00ffff, 0 -0.83em 0 -0.46em #00ffff, 0 -0.83em 0 -0.477em #00ffff;
+        }
+    }
+
+    @keyframes load6 {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, 0 -0.83em 0 -0.42em #00ffff, 0 -0.83em 0 -0.44em #00ffff, 0 -0.83em 0 -0.46em #00ffff, 0 -0.83em 0 -0.477em #00ffff;
+        }
+        5%,
+        95% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, 0 -0.83em 0 -0.42em #00ffff, 0 -0.83em 0 -0.44em #00ffff, 0 -0.83em 0 -0.46em #00ffff, 0 -0.83em 0 -0.477em #00ffff;
+        }
+        10%,
+        59% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, -0.087em -0.825em 0 -0.42em #00ffff, -0.173em -0.812em 0 -0.44em #00ffff, -0.256em -0.789em 0 -0.46em #00ffff, -0.297em -0.775em 0 -0.477em #00ffff;
+        }
+        20% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, -0.338em -0.758em 0 -0.42em #00ffff, -0.555em -0.617em 0 -0.44em #00ffff, -0.671em -0.488em 0 -0.46em #00ffff, -0.749em -0.34em 0 -0.477em #00ffff;
+        }
+        38% {
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, -0.377em -0.74em 0 -0.42em #00ffff, -0.645em -0.522em 0 -0.44em #00ffff, -0.775em -0.297em 0 -0.46em #00ffff, -0.82em -0.09em 0 -0.477em #00ffff;
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+            box-shadow: 0 -0.83em 0 -0.4em #00ffff, 0 -0.83em 0 -0.42em #00ffff, 0 -0.83em 0 -0.44em #00ffff, 0 -0.83em 0 -0.46em #00ffff, 0 -0.83em 0 -0.477em #00ffff;
+        }
+    }
+</style>
+
+<div id="adapter-container">
+    <div id="loader" class="loader"></div>
+    <table><tr>
+        <td><img src="syslog.png"></td>
+        <td style="padding-top: 20px;padding-left: 10px"><h3 class="translate">Syslog adapter settings</h3></td>
+    </tr></table>
+    <table>
+        <tr><td colspan="3"><h4 class="translate">DB settings:</h4></td></tr>
+
+        <tr class="real-sql">
+            <td class="translate">Host</td>
+            <td><input id="host" type="text" class="value"/></td>
+            <td></td>
+        </tr>
+        <tr class="real-sql">
+            <td class="translate">Port</td>
+            <td><input id="port" type="text" class="value"/></td>
+            <td></td>
+        </tr>
+        <tr class="ms-sql real-sql">
+            <td class="translate">DB Name</td>
+            <td><input id="dbname" type="text" class="value"/></td>
+            <td></td>
+        </tr>
+        <tr class="real-sql">
+            <td class="translate">User</td>
+            <td><input id="user" type="text" class="value"/></td>
+            <td></td>
+        </tr>
+        <tr class="real-sql">
+            <td class="translate">Password</td>
+            <td><input id="password" type="password" class="value"/></td>
+            <td></td>
+        </tr>
+        <tr class="real-sql">
+            <td class="translate">Password confirm</td>
+            <td><input id="passwordConfirm" type="password"/></td>
+            <td></td>
+        </tr>
+
+    </table>
+    <br><button id="test" class="translate">Test connection</button>
+    <table>
+        <tr><td colspan="3"><h4 class="translate">Notify:</h4></td></tr>
+
+        <tr class="real-sql">
+            <td class="translate">keywords</td>
+            <td><input id="keywords" type="text" class="value"/></td>
+            <td></td>
+        </tr>
+    </table>
+    <!--h4  class="translate">Demo Data:</h4>
+    <table>
+        <tr>
+            <td class="translate">ID</td>
+            <td class="translate">Start</td>
+            <td class="translate">End</td>
+            <td class="translate">Steps</td>
+            <td class="translate">Curve</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="translate"><input id="demoID" type="text" /></td>
+            <td class="translate"><input id="demoStart" /></td>
+            <td class="translate"><input id="demoEnd"  /></td>
+            <td class="translate"><input id="demoStep" type="number" min="1" step="1" value="60"/></td>
+            <td class="translate"><select id="demoCurve">
+                <option value="sin"  class="translate">Sinus</option>
+                <option value="dec"  class="translate">DEC</option>
+                <option value="inc"  class="translate">INC</option>
+                <option value="dec/int"  class="translate">DEC/INC</option>
+            </select></td>
+            <td class="translate"><button id="generateDemo">Generate</button></td>
+        </tr>
+    </table-->
+
+</div>
+</html>

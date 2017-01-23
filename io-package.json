@@ -1,0 +1,63 @@
+{
+    "common": {
+        "name":                     "syslog",
+        "title":                    "Syslog client",
+        "desc":                     {
+            "en": "Client syslog",
+            "de": "Kunde syslog",
+            "ru": "Клиент syslog"
+        },
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "Start of development",
+                "de": "Beginn der Entwicklung",
+                "ru": "Старт разработки"
+            }
+        },
+        "mode":                     "daemon",
+        "platform":                 "Javascript/Node.js",
+        "loglevel":                 "info",
+        "messagebox":               true,
+        "subscribe":                "messagebox",
+        "keywords":                 ["sql", "logging", "syslog"],
+        "preserveSettings":         "custom",
+        "supportCustoms":           true,
+        "enabled":                  true,
+        "stopBeforeUpdate":         true,
+        "authors": [
+            "spectrekr <spectrekr@mail.ru>"
+        ],
+        "license":                  "MIT",
+        "readme":                   "https://github.com/ioBroker/ioBroker.sql/blob/master/README.md",
+        "icon":                     "syslog.png",
+        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.sql/master/admin/sql.png",
+        "type":                     "communication",
+        "dependencies":             [{"js-controller": ">=0.12.0","admin": ">=1.6.10"}],
+        "config":{
+            "minWidth":     570,
+            "width ":       435,
+            "minHeight":    200,
+            "height":       540
+        }
+    },
+    "native": {
+        "host":      "localhost",
+        "port":      0,
+        "user":      "",
+        "password":  "",
+        "dbname":    "rsyslog",
+        "keywords":  "security, dhcp"
+    },
+    "objects": [
+        {
+            "_id": "_design/custom",
+            "language": "javascript",
+            "views": {
+                "state": {
+                    "map": "function(doc) { if (doc.type==='state' && (doc.common.custom || doc.common.history)) emit(doc._id, doc.common.custom || doc.common.history) }"
+                }
+            }
+        }
+    ]
+}
