@@ -57,7 +57,7 @@ function connect() {
     });
 
     if(adapter.config.keywords.length > 0){
-        keys = adapter.config.keywords.split(',').trim;
+        keys = adapter.config.keywords.split(',');
     }
 
 
@@ -203,30 +203,18 @@ function GetId(){
 setInterval(GetId, 60000);
 
 function notifyUser (oldIndex, newIndex){
-    if (keys.length > 0){
-        for( var a in keys){
-            strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-                " AND SysLogTag LIKE '%" + keys[a] + "%'";
-            query_send(strQuery);
-        }
-    }else{
-        strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
+    strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
                     " AND priority BETWEEN 1 AND 4";
-        query_send(strQuery);
-    }
-}
-
-function query_send(str){
-    adapter.log.debug(str);
-    client.query(str, function(err, res_id, fields) {
+    adapter.log.debug(strQuery);
+    client.query(strQuery, function(err, res_id, fields) {
         if (!err) {
-            adapter.log.debug(res_id.length);
             var col = res_id.length;
             if(col > 0){
                 adapter.log.debug(JSON.stringify(res_id[0]));
                 for( var a = 0; a < col; a++) {
                     adapter.log.debug(JSON.stringify(res_id[a]));
                     setNotify(res_id[a], newIndex);
+//                sendTo('telegram', JSON.stringify(res_id[a]));
                 }
             }
         } else {
@@ -237,7 +225,6 @@ function query_send(str){
         }
     });
 }
-
 
 function setNotify(str, ind) {
     adapter.log.debug('Set JSON message');
