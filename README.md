@@ -20,6 +20,8 @@ on({id: 'syslog.0.Message', change: 'ne'}, function (obj) {
 });
 ```
 
+### 0.0.3 (2017-01-24)
+* (spectrekr) Added the ability to work on the keyword
 
 ### 0.0.2 (2017-01-24)
 * (spectrekr) Added selection of the type of information

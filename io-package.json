@@ -9,6 +9,11 @@
         },
         "version": "0.0.2",
         "news": {
+            "0.0.3": {
+                "en": "Added the ability to work on the keyword",
+                "de": "Hinzugefügt wurde die Fähigkeit, sich auf das Schlüsselwort zu arbeiten",
+                "ru": "Добавлена возможность работы по ключевым словам"
+            },
             "0.0.2": {
                 "en": "Added selection of the type of information",
                 "de": "Hinzugefügt Auswahl der Art von Informationen",
@@ -60,7 +65,7 @@
         "t_notice":     false,
         "t_info":       false,
         "t_debug":      false,
-        "keywords":  "security, dhcp"
+        "keywords":  ""
     },
     "objects": [
         {

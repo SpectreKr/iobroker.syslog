@@ -84,8 +84,6 @@ function connect() {
     if(adapter.config.t_debug){
         type_event.push(7);
     }
-
-
 }
 
 function testConnection(msg) {
@@ -184,8 +182,21 @@ function GetId(){
 setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
-    strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-                    " AND priority IN (" + type_event + ")";
+    if(keys.length > 0){
+        for(var b in keys){
+            strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
+                " AND SysLogTag LIKE ('%" + keys[b] + "%')";
+            send_query(strQuery, newIndex);
+        }
+    }else{
+        strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
+            " AND priority IN (" + type_event + ")";
+        send_query(strQuery, newIndex);
+    }
+
+}
+
+function send_query(str, index){
     adapter.log.debug(strQuery);
     client.query(strQuery, function(err, res_id, fields) {
         if (!err) {
@@ -194,7 +205,7 @@ function notifyUser (oldIndex, newIndex){
                 adapter.log.debug(JSON.stringify(res_id[0]));
                 for( var a = 0; a < col; a++) {
                     adapter.log.debug(JSON.stringify(res_id[a]));
-                    setNotify(res_id[a], newIndex);
+                    setNotify(res_id[a], index);
 //                sendTo('telegram', JSON.stringify(res_id[a]));
                 }
             }
