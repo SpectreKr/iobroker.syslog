@@ -267,7 +267,7 @@ function setNotify(str, ind) {
         }else
         if (state != "" || state.val != sendmes || state === null){
             adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
-            adapter.log.debug(JSON.stringify(sendmes));
+            adapter.log.info(JSON.stringify(sendmes));
             sendmes = '';
         }
     });
