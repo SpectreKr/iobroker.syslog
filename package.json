@@ -51,30 +51,5 @@
     "test": "node node_modules/mocha/bin/mocha"
   },
   "license": "MIT",
-  "gitHead": "8dd095dac48e9964c64ac2598189fe46e4b74c9a",
-  "_id": "iobroker.sql@0.0.1",
-  "_shasum": "ea3119009379e75a3c70f5e98f777144b62fa389",
-  "_from": "iobroker.syslog@latest",
-  "_npmVersion": "3.10.8",
-  "_nodeVersion": "6.9.1",
-  "_npmUser": {
-    "name": "SpectreKr",
-    "email": "spectrekr@mail.ru"
-  },
-  "maintainers": [
-    {
-      "name": "SpectreKr",
-      "email": "spectrekr@mail.ru"
-    }
-  ],
-  "dist": {
-    "shasum": "ea3119009379e75a3c70f5e98f777144b62fa389",
-    "tarball": "https://registry.npmjs.org/iobroker.sql/-/iobroker.sql-1.4.2.tgz"
-  },
-  "_npmOperationalInternal": {
-    "host": "packages-12-west.internal.npmjs.com",
-    "tmp": "tmp/iobroker.sql-1.4.2.tgz_1484730469063_0.9159299915190786"
-  },
-  "directories": {},
-  "_resolved": "https://registry.npmjs.org/iobroker.sql/-/iobroker.sql-1.4.2.tgz"
+  "readmeFilename": "README.md"
 }
