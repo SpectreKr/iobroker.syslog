@@ -19,6 +19,10 @@ adapter.on('ready', function () {
     main();
 });
 
+adapter.on('message', function (msg) {
+    processMessage(msg);
+});
+
 adapter.on('stateChange', function (id, state) {
     if(id === 'syslog.0.MaxIndex'){
         adapter.getState(adapter.namespace + '.LastIndex', function (err, state){
@@ -87,8 +91,8 @@ function connect() {
 }
 
 function testConnection(msg) {
-
 /*
+
     var timeout;
     try {
         client.query("SELECT max(id) AS id FROM SystemEvents", function (err, rows, fields) {
@@ -109,7 +113,9 @@ function testConnection(msg) {
             return adapter.sendTo(msg.from, msg.command, {error: ex.toString()}, msg.callback);
         }
     }
-    */
+*/
+
+
 }
 
 function finish(callback) {
@@ -272,4 +278,10 @@ function setNotify(str, ind) {
         }
     });
 //    adapter.setState('LastIndex', {val: ind, ack: true});
+}
+
+function processMessage(msg) {
+    if (msg.command === 'test') {
+        testConnection(msg);
+    }
 }
