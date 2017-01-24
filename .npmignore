@@ -1,6 +1,9 @@
 Gruntfile.js
 tasks
-tmp
+node_modules
+.idea
+.git
+/node_modules
 test
 .travis.yml
-appveyor.yml
+ appveyor.yml
