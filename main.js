@@ -89,49 +89,6 @@ function testConnection(msg) {
     }
     */
 }
-/*
-function _userQuery(msg, callback) {
-    try {
-        adapter.log.debug(msg.message);
-
-        clientPool.borrow(function (err, client) {
-            if (err) {
-                adapter.sendTo(msg.from, msg.command, {error: err.toString()}, msg.callback);
-                if (callback) callback();
-                return;
-            } else {
-                client.execute(msg.message, function (err, rows, fields) {
-                    if (rows && rows.rows) rows = rows.rows;
-                    clientPool.return(client);
-                    adapter.sendTo(msg.from, msg.command, {error: err ? err.toString() : null, result: rows}, msg.callback);
-                    if (callback) callback();
-                    return;
-                });
-            }
-        });
-    } catch (err) {
-        adapter.sendTo(msg.from, msg.command, {error: err.toString()}, msg.callback);
-        if (callback) callback();
-        return;
-    }
-}
-
-// execute custom query
-function query(msg) {
-    if (!multiRequests) {
-        if (tasks.length > 100) {
-            adapter.log.error('Cannot queue new requests, because more than 100');
-            adapter.sendTo(msg.from, msg.command, {error: 'Cannot queue new requests, because more than 100'}, msg.callback);
-            return;
-        }
-        tasks.push({operation: 'userQuery', msg: msg});
-        if (tasks.length === 1) processTasks();
-    } else {
-        _userQuery(msg);
-    }
-}
- */
-
 
 function finish(callback) {
     if (client) {
@@ -200,7 +157,7 @@ function GetId(){
     })
 }
 
-setInterval(GetId, 60000);
+setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
     strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
@@ -264,32 +221,20 @@ function setNotify(str, ind) {
         "message": str.Message
     };
     adapter.getState(adapter.namespace + '.Message', function (err, state){
-        if (state != "" || state != sendmes || state === null){
+        adapter.log.debug("Message val: " + JSON.stringify(state))
+        var old_state = JSON.parse(state.val);
+        var old_mes = old_state.message.substring(old_state.message.indexOf(']')+1);
+        var new_mes = str.Message.substring(str.Message.indexOf(']')+1);
+        adapter.log.debug("Old: " + old_mes);
+        adapter.log.debug("New: " + new_mes);
+        if(old_mes == new_mes){
+            adapter.log.debug("Dublicat!");
+        }else
+        if (state != "" || state.val != sendmes || state === null){
             adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
             adapter.log.debug(JSON.stringify(sendmes));
             sendmes = '';
         }
-        adapter.log.debug("Message val: " + JSON.stringify(state));
     });
 //    adapter.setState('LastIndex', {val: ind, ack: true});
 }
-
-/*
-function _insertValueIntoDB(query, id, cb) {
-    adapter.log.debug(query);
-
-    clientPool.borrow(function (err, client) {
-        if (err) {
-            adapter.log.error(err);
-            if (cb) cb();
-            return;
-        }
-        client.execute(query, function (err, rows, fields) {
-            if (err) adapter.log.error('Cannot insert ' + query + ': ' + err);
-            clientPool.return(client);
-            checkRetention(id);
-            if (cb) cb();
-        });
-    });
-}
-    */
