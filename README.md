@@ -7,14 +7,14 @@
 
 [![NPM](https://nodei.co/npm/iobroker.syslog.png?downloads=true)](https://nodei.co/npm/iobroker.syslog/)
 
-Настраиваем подключение в Mysql серверу, в котором храняться логи.
+Настраиваем подключение к Mysql серверу, в котором храняться логи.
 
 В JavaScript драйвере создаем скрипт.
 
 ```
 on({id: 'syslog.0.Message', change: 'ne'}, function (obj) {
     var text = JSON.parse(obj.newState.val);
-    sendTo('telegram', {user: 'Алексей', text: "time: " + formatDate(new Date(text.time), 'DD.MM.YYYY hh:mm') + '\n' +
+    sendTo('telegram', {user: 'Имя', text: "time: " + formatDate(new Date(text.time), 'DD.MM.YYYY hh:mm') + '\n' +
                                                 "host: " + text.hosts + '\n' + "type: " + text.type  + '\n' +
                                                 "message: " + text.message});
 });
