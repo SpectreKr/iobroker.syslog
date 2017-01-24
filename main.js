@@ -161,7 +161,7 @@ setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
     strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-                    " AND priority BETWEEN 1 AND 4";
+                    " AND priority BETWEEN 0 AND 4";
     adapter.log.debug(strQuery);
     client.query(strQuery, function(err, res_id, fields) {
         if (!err) {
