@@ -8,7 +8,7 @@ var mysql = require('mysql');
 var client;
 var tempIndex;
 var strQuery;
-var keys = [];
+var keys = [], type_event = [];
 
 
 adapter.on('unload', function (callback) {
@@ -60,6 +60,30 @@ function connect() {
         keys = adapter.config.keywords.split(',');
     }
 
+    if(adapter.config.t_emerg){
+        type_event.push(0);
+    }
+    if(adapter.config.t_alert){
+        type_event.push(1);
+    }
+    if(adapter.config.t_critical){
+        type_event.push(2);
+    }
+    if(adapter.config.t_error){
+        type_event.push(3);
+    }
+    if(adapter.config.t_warn){
+        type_event.push(4);
+    }
+    if(adapter.config.t_notice){
+        type_event.push(5);
+    }
+    if(adapter.config.t_info){
+        type_event.push(6);
+    }
+    if(adapter.config.t_debug){
+        type_event.push(7);
+    }
 
 
 }
@@ -161,7 +185,7 @@ setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
     strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-                    " AND priority BETWEEN 0 AND 4";
+                    " AND priority IN (" + type_event + ")";
     adapter.log.debug(strQuery);
     client.query(strQuery, function(err, res_id, fields) {
         if (!err) {

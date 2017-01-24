@@ -7,8 +7,13 @@
             "de": "Kunde syslog",
             "ru": "Клиент syslog"
         },
-        "version": "0.0.1",
+        "version": "0.0.2",
         "news": {
+            "0.0.2": {
+                "en": "Added selection of the type of information",
+                "de": "Hinzugefügt Auswahl der Art von Informationen",
+                "ru": "Добавлен выбор типа информации"
+            },
             "0.0.1": {
                 "en": "Start of development",
                 "de": "Beginn der Entwicklung",
@@ -47,6 +52,14 @@
         "user":      "",
         "password":  "",
         "dbname":    "rsyslog",
+        "t_emerg":      true,
+        "t_alert":      true,
+        "t_critical":   true,
+        "t_error":      true,
+        "t_warn":       true,
+        "t_notice":     false,
+        "t_info":       false,
+        "t_debug":      false,
         "keywords":  "security, dhcp"
     },
     "objects": [

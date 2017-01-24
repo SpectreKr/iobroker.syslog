@@ -1,7 +1,7 @@
 {
   "name": "iobroker.syslog",
   "description": "Syslog read from DB",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": {
     "name": "SpectreKr",
     "email": "spectrekr@mail.ru"
@@ -12,15 +12,15 @@
       "email": "spectrekr@mail.ru"
     }
   ],
-  "homepage": "https://github.com/ioBroker/ioBroker.sql",
+  "homepage": "https://github.com/SpectreKr/iobroker.syslog",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ioBroker/ioBroker.sql.git"
+    "url": "git+https://github.com/SpectreKr/iobroker.syslog.git"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/ioBroker/ioBroker.sql/blob/master/LICENSE"
+      "url": "https://github.com/SpectreKr/iobroker.syslog/blob/master/LICENSE"
     }
   ],
   "keywords": [
@@ -44,7 +44,7 @@
     "chai": "^3.4.1"
   },
   "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.sql/issues"
+    "url": "https://github.com/SpectreKr/iobroker.syslog/issues"
   },
   "main": "main.js",
   "scripts": {

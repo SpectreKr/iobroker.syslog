@@ -248,9 +248,37 @@
 
     </table>
     <br><button id="test" class="translate">Test connection</button>
-    <table>
-        <tr><td colspan="3"><h4 class="translate">Notify:</h4></td></tr>
 
+        <tr><td colspan="3"><h4 class="translate">Notify:</h4></td></tr>
+    <table>
+        <tr class="ms-sql real-sql">
+            <td class="translate">Emerg:</td>
+            <td><input id="t_emerg" type="checkbox" class="value"/></td>
+
+            <td class="translate">Alert:</td>
+            <td><input id="t_alert" type="checkbox" class="value"/></td>
+
+            <td class="translate">Critical:</td>
+            <td><input id="t_critical" type="checkbox" class="value"/></td>
+
+            <td class="translate">Error:</td>
+            <td><input id="t_error" type="checkbox" class="value"/></td>
+
+            <td class="translate">Warn:</td>
+            <td><input id="t_warn" type="checkbox" class="value"/></td>
+
+            <td class="translate">Notice:</td>
+            <td><input id="t_notice" type="checkbox" class="value"/></td>
+
+            <td class="translate">Info:</td>
+            <td><input id="t_info" type="checkbox" class="value"/></td>
+
+            <td class="translate">Debug:</td>
+            <td><input id="t_debug" type="checkbox" class="value"/></td>
+
+        </tr>
+    </table>
+    <table>
         <tr class="real-sql">
             <td class="translate">keywords</td>
             <td><input id="keywords" type="text" class="value"/></td>
