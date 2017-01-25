@@ -54,7 +54,7 @@ function connect() {
     });
 
     try{
-        client.connect(fuction(){
+        client.connect(function(){
             adapter.log.info('connected as id ' + client.threadId);
         });
     }catch (e){
