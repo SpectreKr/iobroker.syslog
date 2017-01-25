@@ -28,9 +28,6 @@
     "syslog data",
     "home automation"
   ],
-  "optionalDependencies": {
-    "mysql": ">=2.9.0"
-  },
   "dependencies": {
     "mysql": ">=2.9.0"
   },
