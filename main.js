@@ -53,13 +53,13 @@ function connect() {
         database:   adapter.config.dbname
     });
 
-    client.connect(function(err) {
-        if (err) {
-            adapter.log.error('error connecting: ' + err.stack);
-            return;
-        }
+    try{
+        client.connect();
         adapter.log.info('connected as id ' + client.threadId);
-    });
+    }catch (e){
+        adapter.log.error('error connecting: ' + e.toString());
+    }
+
 
     if(adapter.config.keywords.length > 0){
         keys = adapter.config.keywords.split(',');
@@ -139,9 +139,7 @@ function testConnection(msg) {
 }
 
 function finish(callback) {
-    if (client) {
         client.end();
-    }
     if (callback)   callback();
 }
 
@@ -191,56 +189,65 @@ function main() {
 //получаем последдний ID
 function GetId(){
     adapter.log.debug("Query max ID");
-    client.query('SELECT max(id) AS id FROM SystemEvents', function(err, res_id, fields) {
-        if (!err) {
-            adapter.setState('MaxIndex', {val: res_id[0].id, ack: true});
-            adapter.log.debug("New index:" + JSON.stringify(res_id[0].id));
-            adapter.setState('LastIndex', {val: res_id[0].id, ack: true});
-        } else {
-            adapter.log.error(err);
-            adapter.finish();
-            adapter.connect();
-            return;
-        }
-    })
+    try {
+        client.query('SELECT max(id) AS id FROM SystemEvents', function (err, res_id, fields) {
+            if (!err) {
+                adapter.setState('MaxIndex', {val: res_id[0].id, ack: true});
+                adapter.log.debug("New index:" + JSON.stringify(res_id[0].id));
+                adapter.setState('LastIndex', {val: res_id[0].id, ack: true});
+            }
+        });
+    } catch (e) {
+        adapter.log.error(e.toString());
+        adapter.finish();
+        adapter.connect();
+    }
 }
 
 setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
-    if (keys.length > 0){
-        for(var b in keys) {
-            strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex + " AND " + newIndex +
-                " AND (SysLogTag LIKE ('%" + keys[b] + "%') OR priority IN (" + type_event + "))";
+    try{
+        if (keys.length > 0){
+            for(var b in keys) {
+                strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex + " AND " + newIndex +
+                    " AND (SysLogTag LIKE ('%" + keys[b] + "%') OR priority IN (" + type_event + "))";
+                send_query(strQuery, newIndex);
+            }
+        }else{
+            strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
+                " AND priority IN (" + type_event + ")";
             send_query(strQuery, newIndex);
         }
-    }else{
-        strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-            " AND priority IN (" + type_event + ")";
-        send_query(strQuery, newIndex);
+    } catch(e){
+        adapter.log.error(e.toString());
+        adapter.finish;
+        adapter.connect;
     }
+
 }
 
 function send_query(str, index){
     adapter.log.debug(strQuery);
-    client.query(strQuery, function(err, res_id, fields) {
-        if (!err) {
-            var col = res_id.length;
-            if(col > 0){
-                adapter.log.debug(JSON.stringify(res_id[0]));
-                for( var a = 0; a < col; a++) {
-                    adapter.log.debug(JSON.stringify(res_id[a]));
-                    setNotify(res_id[a], index);
+    try {
+        client.query(strQuery, function (err, res_id, fields) {
+            if (!err) {
+                var col = res_id.length;
+                if (col > 0) {
+                    adapter.log.debug(JSON.stringify(res_id[0]));
+                    for (var a = 0; a < col; a++) {
+                        adapter.log.debug(JSON.stringify(res_id[a]));
+                        setNotify(res_id[a], index);
 //                sendTo('telegram', JSON.stringify(res_id[a]));
+                    }
                 }
             }
-        } else {
-            adapter.log.error(err);
-            adapter.finish;
-            adapter.connect;
-            return;
-        }
-    });
+        });
+    } catch (e) {
+        adapter.log.error(e.toString());
+        adapter.finish;
+        adapter.connect;
+    }
 }
 
 function setNotify(str, ind) {
