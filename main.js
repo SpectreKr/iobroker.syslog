@@ -290,18 +290,19 @@ function setNotify(str, ind) {
     adapter.getState(adapter.namespace + '.Message', function (err, state){
         var old_state, old_m, new_m;
         adapter.log.debug("Message val: " + JSON.stringify(state))
-        if (state != "" || old_m != new_m || state === null){
-            if(state.val != ""  || state.val === null){
-                old_state = JSON.parse(state.val);
-                old_m = old_state.message.substring(str.Message.indexOf(']')+1);
-            }else{
-                old_m = "";
-            }
+        if (state != "" || state === null){
+            adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
+            adapter.log.info(JSON.stringify(sendmes));
+            sendmes = '';
+        }else{
+            old_state = JSON.parse(state.val);
+            old_m = old_state.message.substring(str.Message.indexOf(']')+1);
             new_m = str.Message.substring(str.Message.indexOf(']')+1);
             adapter.log.debug("Old: " + old_m);
             adapter.log.debug("New: " + new_m);
             if(old_m == new_m) {
                 adapter.log.debug("Dublicat!");
+
             }else{
                 adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
                 adapter.log.info(JSON.stringify(sendmes));
