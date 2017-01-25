@@ -287,11 +287,15 @@ function setNotify(str, ind) {
         "message": str.Message
     };
     adapter.getState(adapter.namespace + '.Message', function (err, state){
+        var old_state, old_m, new_m;
         adapter.log.debug("Message val: " + JSON.stringify(state))
         if (state != "" || old_m != new_m || state === null){
-            var old_state = JSON.parse(state.val);
-            var old_m = old_state.message.substring(str.Message.indexOf(']')+1);
-            var new_m = str.Message.substring(str.Message.indexOf(']')+1);
+            if(state != ""  || state === null){
+                old_state = "";
+            }
+            old_state = JSON.parse(state.val);
+            old_m = old_state.message.substring(str.Message.indexOf(']')+1);
+            new_m = str.Message.substring(str.Message.indexOf(']')+1);
             adapter.log.debug("Old: " + old_m);
             adapter.log.debug("New: " + new_m);
             if(old_m == new_m) {
