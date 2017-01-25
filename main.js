@@ -292,7 +292,7 @@ function setNotify(str, ind) {
         adapter.log.debug("Message val: " + JSON.stringify(state))
         if (state != "" || state === null){
             adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
-            adapter.log.info(JSON.stringify(sendmes));
+            adapter.log.debug(JSON.stringify(sendmes));
             sendmes = '';
         }else{
             old_state = JSON.parse(state.val);
@@ -302,7 +302,6 @@ function setNotify(str, ind) {
             adapter.log.debug("New: " + new_m);
             if(old_m == new_m) {
                 adapter.log.debug("Dublicat!");
-
             }else{
                 adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
                 adapter.log.info(JSON.stringify(sendmes));
