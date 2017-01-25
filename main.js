@@ -291,11 +291,11 @@ function setNotify(str, ind) {
         var old_state, old_m, new_m;
         adapter.log.debug("Message val: " + JSON.stringify(state))
         if (state != "" || old_m != new_m || state === null){
-            if(state != ""  || state === null){
+            if(state.val != ""  || state.val === null){
                 old_state = JSON.parse(state.val);
                 old_m = old_state.message.substring(str.Message.indexOf(']')+1);
             }else{
-                old_state = "";
+                old_m = "";
             }
             new_m = str.Message.substring(str.Message.indexOf(']')+1);
             adapter.log.debug("Old: " + old_m);
