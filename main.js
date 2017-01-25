@@ -300,7 +300,7 @@ function setNotify(str, ind) {
             new_m = str.Message.substring(str.Message.indexOf(']')+1);
             adapter.log.debug("Old: " + old_m);
             adapter.log.debug("New: " + new_m);
-            if(old_m == new_m) {
+            if(old_m === new_m) {
                 adapter.log.debug("Dublicat!");
             }else{
                 adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
