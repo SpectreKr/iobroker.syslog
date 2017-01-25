@@ -54,8 +54,9 @@ function connect() {
     });
 
     try{
-        client.connect();
-        adapter.log.info('connected as id ' + client.threadId);
+        client.connect(fuction(){
+            adapter.log.info('connected as id ' + client.threadId);
+        });
     }catch (e){
         adapter.log.error('error connecting: ' + e.toString());
     }
@@ -291,10 +292,11 @@ function setNotify(str, ind) {
         adapter.log.debug("Message val: " + JSON.stringify(state))
         if (state != "" || old_m != new_m || state === null){
             if(state != ""  || state === null){
+                old_state = JSON.parse(state.val);
+                old_m = old_state.message.substring(str.Message.indexOf(']')+1);
+            }else{
                 old_state = "";
             }
-            old_state = JSON.parse(state.val);
-            old_m = old_state.message.substring(str.Message.indexOf(']')+1);
             new_m = str.Message.substring(str.Message.indexOf(']')+1);
             adapter.log.debug("Old: " + old_m);
             adapter.log.debug("New: " + new_m);
