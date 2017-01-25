@@ -9,6 +9,7 @@ var client;
 var tempIndex;
 var strQuery;
 var keys = [], type_event = [];
+var timeout;
 
 
 adapter.on('unload', function (callback) {
@@ -91,16 +92,37 @@ function connect() {
 }
 
 function testConnection(msg) {
-/*
 
-    var timeout;
     try {
-        client.query("SELECT max(id) AS id FROM SystemEvents", function (err, rows, fields) {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-                return adapter.sendTo(msg.from, msg.command, {error: err ? err.toString() : null}, msg.callback);
+        var client_test;
+        timeout = setTimeout(function () {
+            timeout = null;
+            adapter.sendTo(msg.from, msg.command, {error: 'connect timeout'}, msg.callback);
+        }, 5000);
+
+        client_test = mysql.createConnection({
+            host:       adapter.config.host,
+            user:       adapter.config.user,
+            password:   adapter.config.password,
+            database:   adapter.config.dbname
+        });
+
+        client_test.connect(function (err) {
+            if (err) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+                return adapter.sendTo(msg.from, msg.command, {error: err.toString()}, msg.callback);
             }
+            client_test.query("SELECT max(id) AS id FROM SystemEvents", function (err, rows, fields) {
+                client_test.end();
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                    return adapter.sendTo(msg.from, msg.command, {error: err ? err.toString() : null}, msg.callback);
+                }
+            });
         });
     } catch (ex) {
         if (timeout) {
@@ -113,8 +135,6 @@ function testConnection(msg) {
             return adapter.sendTo(msg.from, msg.command, {error: ex.toString()}, msg.callback);
         }
     }
-*/
-
 
 }
 
