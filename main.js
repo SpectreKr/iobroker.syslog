@@ -238,7 +238,6 @@ function send_query(str, index){
                     for (var a = 0; a < col; a++) {
                         adapter.log.debug(JSON.stringify(res_id[a]));
                         setNotify(res_id[a], index);
-//                sendTo('telegram', JSON.stringify(res_id[a]));
                     }
                 }
             }
@@ -289,23 +288,21 @@ function setNotify(str, ind) {
     };
     adapter.getState(adapter.namespace + '.Message', function (err, state){
         adapter.log.debug("Message val: " + JSON.stringify(state))
-        var old_state = JSON.parse(state.val);
-        var old_m = old_state.message.substring(str.Message.indexOf(']')+1);
-        var new_m = str.Message.substring(str.Message.indexOf(']')+1);
-        adapter.log.debug("Old: " + old_m);
-        adapter.log.debug("New: " + new_m);
-        if(old_m == new_m){
-            adapter.log.debug("Dublicat!");
-        }else
         if (state != "" || old_m != new_m || state === null){
-            adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
-            adapter.log.info(JSON.stringify(sendmes));
-            sendmes = '';
-//        }else{
-//            adapter.log.debug("Dublicat!");
+            var old_state = JSON.parse(state.val);
+            var old_m = old_state.message.substring(str.Message.indexOf(']')+1);
+            var new_m = str.Message.substring(str.Message.indexOf(']')+1);
+            adapter.log.debug("Old: " + old_m);
+            adapter.log.debug("New: " + new_m);
+            if(old_m == new_m) {
+                adapter.log.debug("Dublicat!");
+            }else{
+                adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
+                adapter.log.info(JSON.stringify(sendmes));
+                sendmes = '';
+            }
         }
     });
-//    adapter.setState('LastIndex', {val: ind, ack: true});
 }
 
 function processMessage(msg) {
