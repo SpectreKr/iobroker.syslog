@@ -188,14 +188,10 @@ function GetId(){
 setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
-    for(var b in keys){
-        strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-            " AND (SysLogTag LIKE ('%" + keys[b] + "%') OR priority IN (" + type_event + "))";
-        send_query(strQuery, newIndex);
-    }
-/*    if(keys.length > 0){
-        for(var b in keys){
-
+    if (keys.length > 0){
+        for(var b in keys) {
+            strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex + " AND " + newIndex +
+                " AND (SysLogTag LIKE ('%" + keys[b] + "%') OR priority IN (" + type_event + "))";
             send_query(strQuery, newIndex);
         }
     }else{
@@ -203,7 +199,6 @@ function notifyUser (oldIndex, newIndex){
             " AND priority IN (" + type_event + ")";
         send_query(strQuery, newIndex);
     }
-*/
 }
 
 function send_query(str, index){
@@ -263,20 +258,24 @@ function setNotify(str, ind) {
         "hosts": str.FromHost,
         "service": str.SyslogTag,
         "type": pr,
-        "message": str.Message.substring(str.Message.indexOf(']')+1)
+        "message": str.Message
     };
     adapter.getState(adapter.namespace + '.Message', function (err, state){
         adapter.log.debug("Message val: " + JSON.stringify(state))
         var old_state = JSON.parse(state.val);
-        adapter.log.debug("Old: " + old_state.message);
-        adapter.log.debug("New: " + str.Message);
-        if(old_state.message == str.Message){
+        var old_m = old_state.message.substring(str.Message.indexOf(']')+1);
+        var new_m = str.Message.substring(str.Message.indexOf(']')+1);
+        adapter.log.debug("Old: " + old_m);
+        adapter.log.debug("New: " + new_m);
+        if(old_m == new_m){
             adapter.log.debug("Dublicat!");
         }else
-        if (state != "" || state.val != sendmes || state === null){
+        if (state != "" || old_m != new_m || state === null){
             adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
             adapter.log.info(JSON.stringify(sendmes));
             sendmes = '';
+//        }else{
+//            adapter.log.debug("Dublicat!");
         }
     });
 //    adapter.setState('LastIndex', {val: ind, ack: true});
