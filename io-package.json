@@ -9,6 +9,11 @@
         },
         "version": "0.0.2",
         "news": {
+            "0.0.4": {
+                "en": "small changes",
+                "de": "kleine Änderungen",
+                "ru": "Мелкие изменения"
+            },
             "0.0.3": {
                 "en": "Added the ability to work on the keyword",
                 "de": "Hinzugefügt wurde die Fähigkeit, sich auf das Schlüsselwort zu arbeiten",

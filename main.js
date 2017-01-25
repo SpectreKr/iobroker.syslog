@@ -188,10 +188,14 @@ function GetId(){
 setInterval(GetId, 30000);
 
 function notifyUser (oldIndex, newIndex){
-    if(keys.length > 0){
+    for(var b in keys){
+        strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
+            " AND (SysLogTag LIKE ('%" + keys[b] + "%') OR priority IN (" + type_event + "))";
+        send_query(strQuery, newIndex);
+    }
+/*    if(keys.length > 0){
         for(var b in keys){
-            strQuery = "SELECT DeviceReportedTime, Priority, SysLogTag, FromHost, Message  FROM SystemEvents WHERE id BETWEEN " + oldIndex +" AND " + newIndex +
-                " AND SysLogTag LIKE ('%" + keys[b] + "%')";
+
             send_query(strQuery, newIndex);
         }
     }else{
@@ -199,7 +203,7 @@ function notifyUser (oldIndex, newIndex){
             " AND priority IN (" + type_event + ")";
         send_query(strQuery, newIndex);
     }
-
+*/
 }
 
 function send_query(str, index){
@@ -259,16 +263,14 @@ function setNotify(str, ind) {
         "hosts": str.FromHost,
         "service": str.SyslogTag,
         "type": pr,
-        "message": str.Message
+        "message": str.Message.substring(str.Message.indexOf(']')+1)
     };
     adapter.getState(adapter.namespace + '.Message', function (err, state){
         adapter.log.debug("Message val: " + JSON.stringify(state))
         var old_state = JSON.parse(state.val);
-        var old_mes = old_state.message.substring(old_state.message.indexOf(']')+1);
-        var new_mes = str.Message.substring(str.Message.indexOf(']')+1);
-        adapter.log.debug("Old: " + old_mes);
-        adapter.log.debug("New: " + new_mes);
-        if(old_mes == new_mes){
+        adapter.log.debug("Old: " + old_state.message);
+        adapter.log.debug("New: " + str.Message);
+        if(old_state.message == str.Message){
             adapter.log.debug("Dublicat!");
         }else
         if (state != "" || state.val != sendmes || state === null){

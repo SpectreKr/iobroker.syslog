@@ -20,6 +20,9 @@ on({id: 'syslog.0.Message', change: 'ne'}, function (obj) {
 });
 ```
 
+### 0.0.4 (2017-01-25)
+* (spectrekr) small changes
+
 ### 0.0.3 (2017-01-24)
 * (spectrekr) Added the ability to work on the keyword
 
