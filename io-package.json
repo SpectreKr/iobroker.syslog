@@ -7,11 +7,11 @@
             "de": "Kunde syslog",
             "ru": "Клиент syslog"
         },
-        "version": "0.0.2",
+        "version": "0.0.4",
         "news": {
             "0.0.4": {
-                "en": "small changes",
-                "de": "kleine Änderungen",
+                "en": "Small changes",
+                "de": "Kleine Änderungen",
                 "ru": "Мелкие изменения"
             },
             "0.0.3": {
