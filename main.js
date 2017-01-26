@@ -290,7 +290,7 @@ function setNotify(str, ind) {
     adapter.getState(adapter.namespace + '.Message', function (err, state){
         var old_state, old_m, new_m;
         adapter.log.debug("Message val: " + JSON.stringify(state))
-        if (state != "" || state === null){
+        if (state === "" || state === null){
             adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
             adapter.log.debug(JSON.stringify(sendmes));
             sendmes = '';
