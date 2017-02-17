@@ -12,7 +12,7 @@
             "0.0.5": {
                 "en": "Disable notification 'message not found'",
                 "de": "Deaktivieren Anzeige 'nicht gefunden'",
-                "ru": "Отключено ведомление о 'не найденно сообщение'"
+                "ru": "Отключено уведомление о 'не найдено сообщение'"
             },
             "0.0.4": {
                 "en": "Small changes",
