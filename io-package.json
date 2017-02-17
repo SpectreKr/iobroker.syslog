@@ -7,8 +7,13 @@
             "de": "Kunde syslog",
             "ru": "Клиент syslog"
         },
-        "version": "0.0.4",
+        "version": "0.0.5",
         "news": {
+            "0.0.5": {
+                "en": "Disable notification 'message not found'",
+                "de": "Deaktivieren Anzeige 'nicht gefunden'",
+                "ru": "Отключено ведомление о 'не найденно сообщение'"
+            },
             "0.0.4": {
                 "en": "Small changes",
                 "de": "Kleine Änderungen",

@@ -196,6 +196,10 @@ function GetId(){
                 adapter.setState('MaxIndex', {val: res_id[0].id, ack: true});
                 adapter.log.debug("New index:" + JSON.stringify(res_id[0].id));
                 adapter.setState('LastIndex', {val: res_id[0].id, ack: true});
+            }else{
+                adapter.log.error(e.toString());
+                adapter.finish();
+                adapter.connect();
             }
         });
     } catch (e) {
@@ -302,6 +306,9 @@ function setNotify(str, ind) {
             adapter.log.debug("New: " + new_m);
             if(old_m === new_m) {
                 adapter.log.debug("Dublicat!");
+            }else
+            if(new_m.indexOf("error: WARNING: cannot find message with id" >= 0){
+                adapter.log.debug(JSON.stringify(sendmes));
             }else{
                 adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
                 adapter.log.info(JSON.stringify(sendmes));
