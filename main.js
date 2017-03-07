@@ -307,7 +307,8 @@ function setNotify(str, ind) {
             if(old_m === new_m) {
                 adapter.log.debug("Dublicat!");
 	    }else{
-		if(new_m.indexOf("error: WARNING: cannot find message with id" >= 0)){
+		adapter.log.info(
+		if(new_m.indexOf("error: WARNING: cannot find message with id") >= 0 ){
 			adapter.log.debug(JSON.stringify(sendmes));
 		}else{
 			adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
