@@ -36,7 +36,7 @@ adapter.on('stateChange', function (id, state) {
             notifyUser(tempIndex, state.val);
 //            tempIndex = state.val;
         }
-    }
+   }
 });
 
 process.on('SIGINT', function () {
