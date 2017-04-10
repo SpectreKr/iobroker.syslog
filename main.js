@@ -311,7 +311,7 @@ function setNotify(str, ind) {
 			adapter.log.debug(JSON.stringify(sendmes));
 		}else{
 			adapter.setState('Message', {val: JSON.stringify(sendmes), ack: true});
-			adapter.log.info(JSON.stringify(sendmes));
+			adapter.log.debug(JSON.stringify(sendmes));
 			sendmes = '';
 		}
             }
