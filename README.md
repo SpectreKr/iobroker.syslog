@@ -3,7 +3,7 @@
 ==================================
 [![NPM version](http://img.shields.io/npm/v/iobroker.syslog.svg)](https://www.npmjs.com/package/iobroker.syslog)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.syslog.svg)](https://www.npmjs.com/package/iobroker.syslog)
-[![Tests](https://travis-ci.org/ioBroker/ioBroker.syslog.svg?branch=master)](https://travis-ci.org/ioBroker/ioBroker.syslog)
+[![Tests](https://travis-ci.org/SpectreKr/iobroker.syslog.svg?branch=master)](https://travis-ci.org/SpectreKr/iobroker.syslog)
 
 [![NPM](https://nodei.co/npm/iobroker.syslog.png?downloads=true)](https://nodei.co/npm/iobroker.syslog/)
 
